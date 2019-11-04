@@ -30,7 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Drinker</StartupObject>
+    <StartupObject>Singleton</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
@@ -53,6 +53,7 @@
     <Compile Include="adapter\infra\LdapUser.cs" />
     <Compile Include="adapter\infra\LdapUserPhone.cs" />
     <Compile Include="adapter\infra\LdapUserWebServiceClient.cs" />
+    <Compile Include="Singleton.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="Strategy.cs" />
     <Compile Include="Observer.cs" />
