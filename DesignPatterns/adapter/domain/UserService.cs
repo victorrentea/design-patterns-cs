@@ -18,12 +18,12 @@ namespace DesignPatterns.adapter.domain
 
         public void ImportUserFromLdap(string username)
         {
-            List<LdapUser> list = searchByUsername(username);
+            List<User> list = searchByUsername(username);
             if (list.Count() != 1)
             {
                 throw new Exception("There is no single user matching username " + username);
             }
-            User user = buildUser(list[0]);
+            User user = list[0];
 
             if (user.workEmail != null)
             {
@@ -35,14 +35,10 @@ namespace DesignPatterns.adapter.domain
 
         public List<User> SearchUserInLdap(string username)
         {
-            List<LdapUser> list = searchByUsername(username);
-            List<User> results = new List<User>();
-            foreach (LdapUser ldapUser in list)
-            {
-                results.Add(buildUser(ldapUser));
-            }
-            return results;
+            return searchByUsername(username);
         }
+        
+        // ------------------------------------ THOSE WHO ENTER, ABANDON ALL HOPE
 
         private static User buildUser(LdapUser ldapUser)
         {
@@ -50,9 +46,9 @@ namespace DesignPatterns.adapter.domain
             return new User(ldapUser.uId, fullName, ldapUser.workEmail);
         }
 
-        private List<LdapUser> searchByUsername(string username)
+        private List<User> searchByUsername(string username)
         {
-            return wsClient.Search(username.ToUpper(), null, null);
+            return wsClient.Search(username.ToUpper(), null, null).Select(ldapUser => buildUser(ldapUser)).ToList();
         }
     }
 }
