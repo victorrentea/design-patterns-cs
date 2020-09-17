@@ -11,12 +11,24 @@ namespace DesignPatterns
         public static void Main()
         {
             var math = new ExpensiveMathCached(new ExpensiveMath());
+            //var math = new ExpensiveMathCached(new ExpensiveMathWithLogging(new ExpensiveMath()));
 
-            math.IsPrimeWithCache(10000169);
-            math.IsPrimeWithCache(10000169);
+            bizMethod(math);
+
+            bizMethod(new ExpensiveMath());
+        }
+
+        private static void bizMethod(IExpensiveMath math)
+        {
+            math.IsPrime(10000169);
+            math.IsPrime(10000169);
         }
     }
-    class ExpensiveMathCached 
+    interface IExpensiveMath
+    {
+        bool IsPrime(int n);
+    }
+    class ExpensiveMathCached : IExpensiveMath
     {
         private readonly ExpensiveMath wrappedTarget;
         private readonly Dictionary<int, bool> cache = new Dictionary<int, bool>();
@@ -24,7 +36,7 @@ namespace DesignPatterns
         {
             this.wrappedTarget = wrappedTarget;
         }
-        public bool IsPrimeWithCache(int n)
+        public bool IsPrime(int n)
         {
             if (cache.ContainsKey(n))
             {
@@ -38,7 +50,7 @@ namespace DesignPatterns
         }
     }
 
-    class ExpensiveMath
+    class ExpensiveMath: IExpensiveMath
     {
         public bool IsPrime(int n)
         {
