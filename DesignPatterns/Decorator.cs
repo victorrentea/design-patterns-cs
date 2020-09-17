@@ -10,7 +10,7 @@ namespace DesignPatterns
     {
         public static void Main()
         {
-            var math = new ExpensiveMathCached();
+            var math = new ExpensiveMathCached(new ExpensiveMath());
 
             math.IsPrimeWithCache(10000169);
             math.IsPrimeWithCache(10000169);
