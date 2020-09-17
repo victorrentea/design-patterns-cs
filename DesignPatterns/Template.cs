@@ -15,22 +15,21 @@ class Template
         //EmailSender sender = ServiceLocator.getEmailSender("OrderReceived"); //new EmailSender()
         var sender = new EmailSender();
         //Temporal coupling
-        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
-        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
-        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
-        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
-        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
+        sender.SendEmail("a@b.com", AllEmails.ComposeOrderReceivedEmail);
+        sender.SendEmail("a@b.com", AllEmails.ComposeOrderReceivedEmail);
+        sender.SendEmail("a@b.com", AllEmails.ComposeOrderReceivedEmail);
+        sender.SendEmail("a@b.com", AllEmails.ComposeOrderReceivedEmail);
 
         //EmailSender<>
         // CR323: send an email also when the order is shipped. In a similar way as the orderPlaced email.
-        sender.SendEmail("a@b.com", new OrderShippedEmailComposer());
+        sender.SendEmail("a@b.com", AllEmails.ComposeOrderShippedEmail);
         Console.ReadLine();
     }
 }
 
 class EmailSender
 {
-    public void SendEmail(string emailAddress, EmailComposer composer)
+    public void SendEmail(string emailAddress, Action<Email> composer)
     {
         EmailContext context = new EmailContext(/*smtpConfig,etc*/);
         int MAX_RETRIES = 3;
@@ -40,7 +39,7 @@ class EmailSender
             email.sender = "noreply@corp.com";
             email.replyTo = "/dev/null";
             email.to = emailAddress;
-            composer.ComposeEmail(email);
+            composer(email);
             bool success = context.Send(email);
             if (success) break;
         }
@@ -48,28 +47,19 @@ class EmailSender
 
 }
 
-interface EmailComposer
-{
-   void ComposeEmail(Email email);
-}
 
-class OrderReceivedEmailComposer : EmailComposer
+class AllEmails
 {
-    public void ComposeEmail(Email email)
-    {
-        email.subject = "Order Received";
-        email.body = "Thank you for your order";
-    }
-}
-
-class OrderShippedEmailComposer : EmailComposer
-{
-    public void ComposeEmail(Email email)
+    public static void ComposeOrderShippedEmail(Email email)
     {
         email.subject = "Order Shipped";
         email.body = "We shipped you your order. Hope it gets to you this time in one piece.";
     }
-
+    public static void ComposeOrderReceivedEmail(Email email)
+    {
+        email.subject = "Order Received";
+        email.body = "Thank you for your order";
+    }
 }
 
 
