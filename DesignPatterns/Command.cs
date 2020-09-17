@@ -12,6 +12,10 @@ class Drinker
 
     public static void Main(string[] args)
     {
+
+
+        Console.WriteLine("Stuff");
+
         Barman barman = new Barman();
         Drinker drinker = new Drinker(barman);
         Stopwatch stopwatch = Stopwatch.StartNew();
@@ -23,6 +27,7 @@ class Drinker
     public Drinker(Barman barman)
     {
         this.barman = barman;
+        Console.WriteLine("Stuff");
     }
 
     public void Drink() 

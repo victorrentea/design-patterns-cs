@@ -12,6 +12,7 @@ class Joaca
 
         oldLady.AddSubscriber(new Person());
         oldLady.AddSubscriber(new Person());
+        oldLady.AddSubscriber(new Auditor());
 
         oldLady.FindOut("Rita came with a Rocker");
         Console.ReadLine();
@@ -22,10 +23,17 @@ class Person : InterestedObserver
 {
     public void NotifyEvent(string gossip)
     {
-        Console.WriteLine("Aflu si eu de " + gossip);
+        Console.WriteLine("I also find out about " + gossip);
     }
 }
-
+class Auditor : InterestedObserver
+{
+    public void NotifyEvent(string gossip)
+    {
+        Console.WriteLine("Store this gossip into a file:" + gossip);
+    }
+}
+// ------------ from here down, nothing changes when you define new subscriber.
 interface InterestedObserver
 {
     void NotifyEvent(string gossip);

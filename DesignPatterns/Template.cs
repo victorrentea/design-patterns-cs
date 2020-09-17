@@ -8,14 +8,22 @@ class Template
 {
     public static void Main(string[] args)
     {        
-        new EmailSender().SendOrderPlacedEmail("a@b.com");
+        // in many places in code:
+        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
+        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
+        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
+        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
+        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
+
+        // CR323: send an email also when the order is shipped. In a similar way as the orderPlaced email.
+        new EmailSender().SendOrderPlacedEmail("a@b.com", true);
         Console.ReadLine();
     }
 }
 
 class EmailSender
 {
-    public void SendOrderPlacedEmail(String emailAddress)
+    public void SendOrderPlacedEmail(string emailAddress, bool cr323)
     {
         EmailContext context = new EmailContext(/*smtpConfig,etc*/);
         int MAX_RETRIES = 3;
@@ -25,14 +33,21 @@ class EmailSender
             email.sender = "noreply@corp.com";
             email.replyTo = "/dev/null";
             email.to = emailAddress;
-            email.subject = "Order Received";
-            email.body = "Thank you for your order";
+            if (!cr323)
+            {
+                email.subject = "Order Received";
+                email.body = "Thank you for your order";
+            }
+            else
+            {
+                email.subject = "Order Shipped";
+                email.body = "We shipped you your order. Hope it gets to you this time in one piece.";
+            }
             bool success = context.Send(email);
             if (success) break;
         }
     }
-
-
+    
 }
    
 class EmailContext
