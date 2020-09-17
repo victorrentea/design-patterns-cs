@@ -8,22 +8,32 @@ class Template
 {
     public static void Main(string[] args)
     {
+        //new EmailSender.send(factory.creatEmail(RECEIVE_ORDER))
         // in many places in code:
-        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
-        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
-        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
-        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
-        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
+        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
+        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
+        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
+        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
+        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
 
+        //EmailSender<>
         // CR323: send an email also when the order is shipped. In a similar way as the orderPlaced email.
-        new OrderShippedEmailSender().SendOrderPlacedEmail("a@b.com");
+        //new OrderShippedEmailComposer().SendEmail("a@b.com");
+        new EmailSender(new OrderShippedEmailComposer()).SendEmail("a@b.com");
         Console.ReadLine();
     }
 }
 
-abstract class EmailSender
+class EmailSender
 {
-    public void SendOrderPlacedEmail(string emailAddress)
+    private readonly EmailComposer composer;
+
+    public EmailSender(EmailComposer composer)
+    {
+        this.composer = composer;
+    }
+
+    public void SendEmail(string emailAddress)
     {
         EmailContext context = new EmailContext(/*smtpConfig,etc*/);
         int MAX_RETRIES = 3;
@@ -33,27 +43,31 @@ abstract class EmailSender
             email.sender = "noreply@corp.com";
             email.replyTo = "/dev/null";
             email.to = emailAddress;
-            ComposeEmail(email);
+            composer.ComposeEmail(email);
             bool success = context.Send(email);
             if (success) break;
         }
     }
 
-    public abstract void ComposeEmail(Email email);
 }
 
-class OrderReceivedEmailSender : EmailSender
+interface EmailComposer
 {
-    public override void ComposeEmail(Email email)
+   void ComposeEmail(Email email);
+}
+
+class OrderReceivedEmailComposer : EmailComposer
+{
+    public void ComposeEmail(Email email)
     {
         email.subject = "Order Received";
         email.body = "Thank you for your order";
     }
 }
 
-class OrderShippedEmailSender : EmailSender
+class OrderShippedEmailComposer : EmailComposer
 {
-    public override void ComposeEmail(Email email)
+    public void ComposeEmail(Email email)
     {
         email.subject = "Order Shipped";
         email.body = "We shipped you your order. Hope it gets to you this time in one piece.";
@@ -88,3 +102,15 @@ class Email
     }
 
 }
+//class EmailFactory
+//{
+//    public Email create(string emailAddress, enum kind)
+//    {
+//        Email email = new Email(); // constructor generates new unique 
+//        email.sender = "noreply@corp.com";
+//        email.replyTo = "/dev/null";
+//        email.to = emailAddress;
+//        if / switch
+//        ComposeEmail(email);
+//    }
+//}
