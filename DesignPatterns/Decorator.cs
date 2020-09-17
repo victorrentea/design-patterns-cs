@@ -10,25 +10,25 @@ namespace DesignPatterns
     {
         public static void Main()
         {
-            var math = new ExpensiveMathCached(new ExpensiveMath());
+            var math = new ExpensiveMathCached(new ExpensiveMathImpl());
             //var math = new ExpensiveMathCached(new ExpensiveMathWithLogging(new ExpensiveMath()));
 
             bizMethod(math);
 
-            bizMethod(new ExpensiveMath());
+            bizMethod(new ExpensiveMathImpl());
         }
 
-        private static void bizMethod(IExpensiveMath math)
+        private static void bizMethod(ExpensiveMath math)
         {
             math.IsPrime(10000169);
             math.IsPrime(10000169);
         }
     }
-    interface IExpensiveMath
+    interface ExpensiveMath
     {
         bool IsPrime(int n);
     }
-    class ExpensiveMathCached : IExpensiveMath
+    class ExpensiveMathCached : ExpensiveMath
     {
         private readonly ExpensiveMath wrappedTarget;
         private readonly Dictionary<int, bool> cache = new Dictionary<int, bool>();
@@ -50,7 +50,7 @@ namespace DesignPatterns
         }
     }
 
-    class ExpensiveMath: IExpensiveMath
+    class ExpensiveMathImpl: ExpensiveMath
     {
         public bool IsPrime(int n)
         {
