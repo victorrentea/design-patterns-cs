@@ -7,23 +7,23 @@ using System.Threading.Tasks;
 class Template
 {
     public static void Main(string[] args)
-    {        
+    {
         // in many places in code:
-        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
-        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
-        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
-        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
-        new EmailSender().SendOrderPlacedEmail("a@b.com", false);
+        new EmailSender().SendOrderPlacedEmail("a@b.com");
+        new EmailSender().SendOrderPlacedEmail("a@b.com");
+        new EmailSender().SendOrderPlacedEmail("a@b.com");
+        new EmailSender().SendOrderPlacedEmail("a@b.com");
+        new EmailSender().SendOrderPlacedEmail("a@b.com");
 
         // CR323: send an email also when the order is shipped. In a similar way as the orderPlaced email.
-        new EmailSender().SendOrderPlacedEmail("a@b.com", true);
+        new EmailSender().SendOrderPlacedEmail("a@b.com");
         Console.ReadLine();
     }
 }
 
 class EmailSender
 {
-    public void SendOrderPlacedEmail(string emailAddress, bool cr323)
+    public void SendOrderPlacedEmail(string emailAddress)
     {
         EmailContext context = new EmailContext(/*smtpConfig,etc*/);
         int MAX_RETRIES = 3;
@@ -33,23 +33,30 @@ class EmailSender
             email.sender = "noreply@corp.com";
             email.replyTo = "/dev/null";
             email.to = emailAddress;
-            if (!cr323)
-            {
-                email.subject = "Order Received";
-                email.body = "Thank you for your order";
-            }
-            else
-            {
-                email.subject = "Order Shipped";
-                email.body = "We shipped you your order. Hope it gets to you this time in one piece.";
-            }
+            ComposeEmail(email);
             bool success = context.Send(email);
             if (success) break;
         }
     }
-    
+
+    public virtual void ComposeEmail(Email email)
+    {
+        email.subject = "Order Received";
+        email.body = "Thank you for your order";
+    }
 }
-   
+
+class Hacking : EmailSender
+{
+    public override void ComposeEmail(Email email)
+    {
+        email.subject = "Order Shipped"; 
+        email.body = "We shipped you your order. Hope it gets to you this time in one piece.";
+    }
+
+}
+
+
 class EmailContext
 {
     private readonly Random rand = new Random();
