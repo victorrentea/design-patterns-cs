@@ -14,8 +14,8 @@ class Template
         //EmailSender sender = ServiceLocator.getEmailSender("OrderShipped"); //new EmailSender();
         //EmailSender sender = ServiceLocator.getEmailSender("OrderReceived"); //new EmailSender()
         var sender = new EmailSender();
-
-        sender.composer=new OrderReceivedEmailComposer();
+        //Temporal coupling
+        sender.composer=new OrderReceivedEmailComposer(); // 1: forget (WHY?)  2: C# multithreading
         sender.SendEmail("a@b.com");
 
         //new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
