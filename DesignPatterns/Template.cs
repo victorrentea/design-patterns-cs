@@ -15,33 +15,22 @@ class Template
         //EmailSender sender = ServiceLocator.getEmailSender("OrderReceived"); //new EmailSender()
         var sender = new EmailSender();
         //Temporal coupling
-        sender.composer=new OrderReceivedEmailComposer(); // 1: forget (WHY?)  2: C# multithreading
-        sender.SendEmail("a@b.com");
-
-        //new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
-        //new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
-        //new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
-        //new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
+        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
+        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
+        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
+        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
+        sender.SendEmail("a@b.com", new OrderReceivedEmailComposer());
 
         //EmailSender<>
         // CR323: send an email also when the order is shipped. In a similar way as the orderPlaced email.
-        //new OrderShippedEmailComposer().SendEmail("a@b.com");
-        //new EmailSender(new OrderShippedEmailComposer()).SendEmail("a@b.com");
+        sender.SendEmail("a@b.com", new OrderShippedEmailComposer());
         Console.ReadLine();
     }
 }
 
 class EmailSender
 {
-    public EmailComposer composer;
-
-    
-    //public EmailSender(EmailComposer composer)
-    //{
-    //    this.composer = composer;
-    //}
-
-    public void SendEmail(string emailAddress)
+    public void SendEmail(string emailAddress, EmailComposer composer)
     {
         EmailContext context = new EmailContext(/*smtpConfig,etc*/);
         int MAX_RETRIES = 3;
