@@ -28,16 +28,18 @@ class CustomsService
 
     private static TaxComputer SelectTaxComputer(string originCountry)
     {
+
         List<TaxComputer> computers = new List<TaxComputer>() 
             { new EUTaxComputer(), new ChinaTaxComputer(), new UKTaxComputer() };
 
-        return computers.Where(c => c.GetSupportedCountries().Contains(originCountry))
+        return computers.Where(c => c.IsSupportingCountry(originCountry))
             .First();
     }
 }
 interface TaxComputer
 {
-    List<string> GetSupportedCountries();
+    //List<string> GetSupportedCountries();
+    bool IsSupportingCountry(string countryCode);
 
     double compute(double tobaccoValue, double regularValue);
 }
@@ -49,9 +51,9 @@ class EUTaxComputer : TaxComputer
         return tobaccoValue / 3;
     }
 
-    public List<string> GetSupportedCountries()
+    public bool IsSupportingCountry(string countryCode)
     {
-        return new List<string>() { "ES", "FR", "RO" };
+        return new List<string>() { "ES", "FR", "RO" }.Contains(countryCode);
     }
 }
 class ChinaTaxComputer : TaxComputer
@@ -62,9 +64,9 @@ class ChinaTaxComputer : TaxComputer
         return tobaccoValue + regularValue;
     }
 
-    public List<string> GetSupportedCountries()
+    public bool IsSupportingCountry(string countryCode)
     {
-        return new List<string>() { "CN" };
+        return countryCode == "CN";
     }
 }
 
@@ -78,8 +80,8 @@ class UKTaxComputer : TaxComputer
         // 50 lines of code.
         return tobaccoValue / 2 + regularValue;
     }
-    public List<string> GetSupportedCountries()
+    public bool IsSupportingCountry(string countryCode)
     {
-        return new List<string>() { "UK" };
+        return countryCode == "UK";
     }
 }
