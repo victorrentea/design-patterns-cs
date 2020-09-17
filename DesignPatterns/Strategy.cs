@@ -22,40 +22,50 @@ class CustomsService
     // UGLY API we CANNOT change
     public double ComputeCustomsTax(string originCountry, double tobaccoValue, double regularValue)
     {
-        TaxComputer computer;
-        switch (originCountry)
-        {
-            case "UK":
-                computer = new UKTaxComputer(); break;
-            case "CN":
-                computer = new ChinaTaxComputer(); break;
-            case "RO":
-            case "ES":
-            case "FR":
-                computer = new EUTaxComputer(); break;
-            default: throw new Exception("JDD: unexpected value: " + originCountry);
-        }
+        TaxComputer computer = SelectTaxComputer(originCountry);
         return computer.compute(tobaccoValue, regularValue);
+    }
+
+    private static TaxComputer SelectTaxComputer(string originCountry)
+    {
+        List<TaxComputer> computers = new List<TaxComputer>() 
+            { new EUTaxComputer(), new ChinaTaxComputer(), new UKTaxComputer() };
+
+        return computers.Where(c => c.GetSupportedCountries().Contains(originCountry))
+            .First();
     }
 }
 interface TaxComputer
 {
+    List<string> GetSupportedCountries();
+
     double compute(double tobaccoValue, double regularValue);
 }
 class EUTaxComputer : TaxComputer
 {
+    //const string[] COUNTRY_CODE = ["RO", "ES", "FR"];
     public double compute(double tobaccoValue, double regularValueUnused)
     {
         return tobaccoValue / 3;
     }
+
+    public List<string> GetSupportedCountries()
+    {
+        return new List<string>() { "ES", "FR", "RO" };
+    }
 }
 class ChinaTaxComputer : TaxComputer
 {
+    public const string COUNTRY_CODE = "CN";
     public double compute(double tobaccoValue, double regularValue)
     {
         return tobaccoValue + regularValue;
     }
 
+    public List<string> GetSupportedCountries()
+    {
+        return new List<string>() { "CN" };
+    }
 }
 
 class UKTaxComputer : TaxComputer
@@ -68,5 +78,8 @@ class UKTaxComputer : TaxComputer
         // 50 lines of code.
         return tobaccoValue / 2 + regularValue;
     }
-
+    public List<string> GetSupportedCountries()
+    {
+        return new List<string>() { "UK" };
+    }
 }

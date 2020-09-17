@@ -11,7 +11,6 @@ namespace DesignPatterns.adapter.domain
         public LdapUserServiceAdapter(LdapUserWebServiceClient wsClient)
 
         {
-            DynamicDe
             this.wsClient = wsClient;
         }
         public List<User> SearchByUsername(string username)
