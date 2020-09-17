@@ -10,17 +10,20 @@ namespace DesignPatterns
     {
         public static void Main()
         {
-            var math = new ExpensiveMath();
+            var math = new ExpensiveMathCached();
 
             math.IsPrimeWithCache(10000169);
             math.IsPrimeWithCache(10000169);
         }
     }
-
-    class ExpensiveMath
+    class ExpensiveMathCached 
     {
-        private Dictionary<int, bool> cache = new Dictionary<int, bool>();
-
+        private readonly ExpensiveMath wrappedTarget;
+        private readonly Dictionary<int, bool> cache = new Dictionary<int, bool>();
+        public ExpensiveMathCached(ExpensiveMath wrappedTarget)
+        {
+            this.wrappedTarget = wrappedTarget;
+        }
         public bool IsPrimeWithCache(int n)
         {
             if (cache.ContainsKey(n))
@@ -28,12 +31,16 @@ namespace DesignPatterns
                 return cache[n];
             }
 
-            var result = IsPrime(n);
+            var result = wrappedTarget.IsPrime(n);
 
             cache[n] = result;
             return result;
         }
-        private bool IsPrime(int n)
+    }
+
+    class ExpensiveMath
+    {
+        public bool IsPrime(int n)
         {
             //for /2 %i
             return true; // 2 sec
