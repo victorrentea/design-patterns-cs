@@ -2,8 +2,9 @@
 
 namespace DesignPatterns.adapter.domain
 {
-    interface ILdapUserServiceAdapter
+    interface ExternalUserService
     {
-        List<User> searchByUsername(string username);
+
+        List<User> SearchByUsername(string username);
     }
 }

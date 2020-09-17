@@ -9,15 +9,15 @@ namespace DesignPatterns.adapter.domain
     // Holy sacred Domain Service holding my essential precious domain logic
     class UserService
     {
-        private readonly ILdapUserServiceAdapter ldapUserAdapter;
-        public UserService(ILdapUserServiceAdapter wsClient)
+        private readonly ExternalUserService ldapUserAdapter;
+        public UserService(ExternalUserService wsClient)
         {
             this.ldapUserAdapter = wsClient;
         }
 
         public void ImportUserFromLdap(string username)
         {
-            List<User> list = ldapUserAdapter.searchByUsername(username);
+            List<User> list = ldapUserAdapter.SearchByUsername(username);
             if (list.Count() != 1)
             {
                 throw new Exception("There is no single user matching username " + username);
@@ -35,7 +35,7 @@ namespace DesignPatterns.adapter.domain
 
         public List<User> SearchUserInLdap(string username)
         {
-            return ldapUserAdapter.searchByUsername(username);
+            return ldapUserAdapter.SearchByUsername(username);
         }
         
     }

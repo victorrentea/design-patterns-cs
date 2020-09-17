@@ -5,14 +5,14 @@ using System.Linq;
 namespace DesignPatterns.adapter.domain
 {
     // ------------------------------------ THOSE WHO ENTER, ABANDON ALL HOPE
-    class LdapUserServiceAdapter : ILdapUserServiceAdapter
+    class LdapUserServiceAdapter : ExternalUserService
     {
         private readonly LdapUserWebServiceClient wsClient;
         public LdapUserServiceAdapter(LdapUserWebServiceClient wsClient)
         {
             this.wsClient = wsClient;
         }
-        public List<User> searchByUsername(string username)
+        public List<User> SearchByUsername(string username)
         {
             return wsClient.Search(username.ToUpper(), null, null).Select(ldapUser => buildUser(ldapUser)).ToList();
         }

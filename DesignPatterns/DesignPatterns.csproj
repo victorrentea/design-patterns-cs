@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapter.cs" />
-    <Compile Include="adapter\domain\ILdapUserServiceAdapter.cs" />
+    <Compile Include="adapter\domain\ExternalUserService.cs" />
     <Compile Include="adapter\infra\LdapUserServiceAdapter.cs" />
     <Compile Include="adapter\domain\User.cs" />
     <Compile Include="adapter\domain\UserService.cs" />
