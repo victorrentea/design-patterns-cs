@@ -56,6 +56,7 @@
     <Compile Include="adapter\infra\LdapUserPhone.cs" />
     <Compile Include="adapter\infra\LdapUserWebServiceClient.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="Decorator.cs" />
     <Compile Include="Singleton.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="Strategy.cs" />
