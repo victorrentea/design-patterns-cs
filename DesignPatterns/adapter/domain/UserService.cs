@@ -7,20 +7,23 @@ using System.Threading.Tasks;
 
 namespace DesignPatterns.adapter.domain
 {
+    // Holy sacred Domain Service holding my essential precious domain logic
     class UserService
     {
         private readonly LdapUserWebServiceClient wsClient;
+        public UserService(LdapUserWebServiceClient wsClient)
+        {
+            this.wsClient = wsClient;
+        }
 
         public void ImportUserFromLdap(string username)
         {
-            List<LdapUser> list = wsClient.Search(username.ToUpper(), null, null);
+            List<LdapUser> list = searchByUsername(username);
             if (list.Count() != 1)
             {
                 throw new Exception("There is no single user matching username " + username);
             }
-            LdapUser ldapUser = list[0];
-            string fullName = ldapUser.fName + " " + ldapUser.lName.ToUpper();
-            User user = new User(ldapUser.uId, fullName, ldapUser.workEmail);
+            User user = buildUser(list[0]);
 
             if (user.workEmail != null)
             {
@@ -29,18 +32,27 @@ namespace DesignPatterns.adapter.domain
             Console.WriteLine("Insert user in my database");
         }
 
+
         public List<User> SearchUserInLdap(string username)
         {
-            List<LdapUser> list = wsClient.Search(username.ToUpper(), null, null);
+            List<LdapUser> list = searchByUsername(username);
             List<User> results = new List<User>();
             foreach (LdapUser ldapUser in list)
             {
-                string fullName = ldapUser.fName + " " + ldapUser.lName.ToUpper();
-                User user = new User(ldapUser.uId, fullName, ldapUser.workEmail);
-                results.Add(user);
+                results.Add(buildUser(ldapUser));
             }
             return results;
         }
 
+        private static User buildUser(LdapUser ldapUser)
+        {
+            string fullName = ldapUser.fName + " " + ldapUser.lName.ToUpper();
+            return new User(ldapUser.uId, fullName, ldapUser.workEmail);
+        }
+
+        private List<LdapUser> searchByUsername(string username)
+        {
+            return wsClient.Search(username.ToUpper(), null, null);
+        }
     }
 }

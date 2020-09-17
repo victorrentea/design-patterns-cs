@@ -13,6 +13,7 @@ namespace DesignPatterns.adapter.infra
         public string lName;
         public string creationDate;
         public string workEmail;
+        public string facebookId;
         public List<LdapUserPhone> emailAddresses = new List<LdapUserPhone>();
     }
 }

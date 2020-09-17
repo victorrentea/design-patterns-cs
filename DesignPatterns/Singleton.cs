@@ -5,10 +5,76 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-class Singleton
+
+
+
+
+
+
+
+class ManualSingleton
 {
+    private static ManualSingleton INSTANCE;
+    static private string config;
+    //private Connection conne
+
+    private ManualSingleton() {
+        // load from disk
+        // 100 ms 
+        config = "Config";
+    }
+
+    public static ManualSingleton GetInstance()
+    {
+        if (INSTANCE == null)
+        {
+            INSTANCE = new ManualSingleton();
+        }
+        return INSTANCE;
+    }
+
+    public string GetExpensiveCachedStuff()
+    {
+        return config;
+    }
+
+}
+
+
+
+
+class FlatFileExport
+{
+    public FlatFileExport() : this(',') { }
+    
+    public FlatFileExport(char separator) //canonic constructor (with all the args)
+    {
+
+    }
+
+    public static FlatFileExport CreateWithComma()
+    {
+        return new FlatFileExport(',');
+    }
+
+}
+
+
+
+
+    class Singleton
+
+{
+
     public static void Main(string[] args)
     {
+        //new FlatFileExport();
+        FlatFileExport.CreateWithComma();
+
+        //ManualSingleton theInstance = ManualSingleton.GetInstance();
+        //ManualSingleton sameInstance = ManualSingleton.GetInstance();
+//var c = ManualSingleton.GetInstance().GetExpensiveCachedStuff();
+
         LabelService labelService = new LabelService(new CountryRepo());
         OrderExporter orderExporter = new OrderExporter(new InvoiceExporter(labelService), labelService);
         orderExporter.Export("en");
@@ -27,6 +93,7 @@ class OrderExporter
     {
         this.invoiceExporter = invoiceExporter;
         this.labelService = labelService;
+        ManualSingleton.GetInstance().GetExpensiveCachedStuff();
     }
 
     public void Export(string locale)
@@ -39,6 +106,7 @@ class OrderExporter
 
 class InvoiceExporter
 {
+    //private readonly Log log = LogFactory.getLogger("IvoiceExporter");
     private readonly LabelService labelService;
     
     public InvoiceExporter(LabelService labelService)
@@ -49,6 +117,7 @@ class InvoiceExporter
     public void ExportInvoice()
     {
         Console.WriteLine("Invoice Country: " + labelService.getCountryName("ES"));
+        
     }
 }
 
