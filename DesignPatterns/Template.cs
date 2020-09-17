@@ -10,28 +10,36 @@ class Template
     {
         //new EmailSender.send(factory.creatEmail(RECEIVE_ORDER))
         // in many places in code:
-        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
-        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
-        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
-        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
-        new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
+
+        //EmailSender sender = ServiceLocator.getEmailSender("OrderShipped"); //new EmailSender();
+        //EmailSender sender = ServiceLocator.getEmailSender("OrderReceived"); //new EmailSender()
+        var sender = new EmailSender();
+
+        sender.composer=new OrderReceivedEmailComposer();
+        sender.SendEmail("a@b.com");
+
+        //new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
+        //new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
+        //new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
+        //new EmailSender(new OrderReceivedEmailComposer()).SendEmail("a@b.com");
 
         //EmailSender<>
         // CR323: send an email also when the order is shipped. In a similar way as the orderPlaced email.
         //new OrderShippedEmailComposer().SendEmail("a@b.com");
-        new EmailSender(new OrderShippedEmailComposer()).SendEmail("a@b.com");
+        //new EmailSender(new OrderShippedEmailComposer()).SendEmail("a@b.com");
         Console.ReadLine();
     }
 }
 
 class EmailSender
 {
-    private readonly EmailComposer composer;
+    public EmailComposer composer;
 
-    public EmailSender(EmailComposer composer)
-    {
-        this.composer = composer;
-    }
+    
+    //public EmailSender(EmailComposer composer)
+    //{
+    //    this.composer = composer;
+    //}
 
     public void SendEmail(string emailAddress)
     {
