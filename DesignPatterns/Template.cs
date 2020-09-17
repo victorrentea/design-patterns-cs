@@ -9,19 +9,19 @@ class Template
     public static void Main(string[] args)
     {
         // in many places in code:
-        new EmailSender().SendOrderPlacedEmail("a@b.com");
-        new EmailSender().SendOrderPlacedEmail("a@b.com");
-        new EmailSender().SendOrderPlacedEmail("a@b.com");
-        new EmailSender().SendOrderPlacedEmail("a@b.com");
-        new EmailSender().SendOrderPlacedEmail("a@b.com");
+        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
+        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
+        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
+        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
+        new OrderReceivedEmailSender().SendOrderPlacedEmail("a@b.com");
 
         // CR323: send an email also when the order is shipped. In a similar way as the orderPlaced email.
-        new EmailSender().SendOrderPlacedEmail("a@b.com");
+        new OrderShippedEmailSender().SendOrderPlacedEmail("a@b.com");
         Console.ReadLine();
     }
 }
 
-class EmailSender
+abstract class EmailSender
 {
     public void SendOrderPlacedEmail(string emailAddress)
     {
@@ -39,18 +39,23 @@ class EmailSender
         }
     }
 
-    public virtual void ComposeEmail(Email email)
+    public abstract void ComposeEmail(Email email);
+}
+
+class OrderReceivedEmailSender : EmailSender
+{
+    public override void ComposeEmail(Email email)
     {
         email.subject = "Order Received";
         email.body = "Thank you for your order";
     }
 }
 
-class Hacking : EmailSender
+class OrderShippedEmailSender : EmailSender
 {
     public override void ComposeEmail(Email email)
     {
-        email.subject = "Order Shipped"; 
+        email.subject = "Order Shipped";
         email.body = "We shipped you your order. Hope it gets to you this time in one piece.";
     }
 
