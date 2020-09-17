@@ -22,32 +22,34 @@ class CustomsService
     // UGLY API we CANNOT change
     public double ComputeCustomsTax(string originCountry, double tobaccoValue, double regularValue)
     {
+        TaxComputer computer;
         switch (originCountry)
         {
             case "UK":
-                return new UKTaxComputer().compute(tobaccoValue, regularValue);
+                computer = new UKTaxComputer(); break;
             case "CN":
-                return new ChinaTaxComputer().compute(tobaccoValue, regularValue);
+                computer = new ChinaTaxComputer(); break;
             case "RO":
             case "ES":
-            case "FR": 
-                return new EUTaxComputer().compute(tobaccoValue);
+            case "FR":
+                computer = new EUTaxComputer(); break;
             default: throw new Exception("JDD: unexpected value: " + originCountry);
         }
+        return computer.compute(tobaccoValue, regularValue);
     }
-
-
-   
-
 }
-class EUTaxComputer
+interface TaxComputer
 {
-    public double compute(double tobaccoValue)
+    double compute(double tobaccoValue, double regularValue);
+}
+class EUTaxComputer : TaxComputer
+{
+    public double compute(double tobaccoValue, double regularValueUnused)
     {
         return tobaccoValue / 3;
     }
 }
-class ChinaTaxComputer
+class ChinaTaxComputer : TaxComputer
 {
     public double compute(double tobaccoValue, double regularValue)
     {
@@ -56,7 +58,7 @@ class ChinaTaxComputer
 
 }
 
-class UKTaxComputer
+class UKTaxComputer : TaxComputer
 {
     public double compute(double tobaccoValue, double regularValue)
     {
